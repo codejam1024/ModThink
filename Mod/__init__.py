@@ -12,20 +12,18 @@ def ModInit():
         if os.path.isfile('Mod' + s + f):
             fname = os.path.splitext(f)
             if fname[1] == '.py' and fname[0] != '__init__':
-                __import__('Mod.'+fname[0])
+                impMod = __import__('Mod.'+fname[0])
+                impMod = getattr(impMod, fname[0])
                 #print '[-]Load Mod.' + fname[0]
                 if fname[0] != "Controller":
                     Mod.Modules.append(fname[0])
-                exec 'Mod.' + fname[0] + "=" + fname[0]
+                setattr(Mod,fname[0], impMod)
 
     Mod.Modules.append("Controller")
 
     for m in Mod.Modules:
         if m != "Controller":
-            try:
-                exec 'Mod.' + m + '.Init()'
-            except:
-                pass
+            getattr(Mod,m).Init()
 
     Mod.Controller.Init()
 
